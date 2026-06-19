@@ -19,16 +19,16 @@ jobs:
 
     services:
       mysql:
-        image: mysql:8
+        image: mariadb:11
         env:
-          MYSQL_ROOT_PASSWORD: rootpassword
-          MYSQL_DATABASE: testdb
-          MYSQL_USER: testuser
-          MYSQL_PASSWORD: testpassword
+          MARIADB_ROOT_PASSWORD: rootpassword
+          MARIADB_DATABASE: testdb
+          MARIADB_USER: testuser
+          MARIADB_PASSWORD: testpassword
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping --silent"
+          --health-cmd="mariadb-admin ping --silent"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
@@ -54,7 +54,6 @@ jobs:
           operation: 'dry-run'
         env:
           DATABASE_PWD: testpassword
-          MYSQL_SKIP_SSL: '1'
 
       - name: Test Local Action (migrate)
         id: test-action-migrate
@@ -67,7 +66,6 @@ jobs:
           operation: 'migrate'
         env:
           DATABASE_PWD: testpassword
-          MYSQL_SKIP_SSL: '1'
 
       - name: Test Local Action (check)
         id: test-action-check
@@ -80,7 +78,6 @@ jobs:
           operation: 'check'
         env:
           DATABASE_PWD: testpassword
-          MYSQL_SKIP_SSL: '1'
 
       - name: Print Output
         id: output

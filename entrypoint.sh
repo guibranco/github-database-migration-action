@@ -46,7 +46,6 @@ echo "Database  : ${DATABASE}"
 exec_sql_mysql() {
   mysql --host="${HOST}" --user="${DB_USER}" \
     ${DATABASE_PWD:+--password="${DATABASE_PWD}"} \
-    ${MYSQL_SKIP_SSL:+--skip-ssl} \
     --batch --skip-column-names \
     --database="${DATABASE}" \
     --execute="${1}"
@@ -55,7 +54,6 @@ exec_sql_mysql() {
 exec_file_mysql() {
   mysql --host="${HOST}" --user="${DB_USER}" \
     ${DATABASE_PWD:+--password="${DATABASE_PWD}"} \
-    ${MYSQL_SKIP_SSL:+--skip-ssl} \
     --database="${DATABASE}" < "${1}"
 }
 
@@ -110,8 +108,7 @@ init_schema() {
     mysql|mariadb)
       mysql --host="${HOST}" --user="${DB_USER}" \
         ${DATABASE_PWD:+--password="${DATABASE_PWD}"} \
-        ${MYSQL_SKIP_SSL:+--skip-ssl} \
-        --database="${DATABASE}" << 'SQL'
+            --database="${DATABASE}" << 'SQL'
 CREATE TABLE IF NOT EXISTS `schema_version` (
   `Sequence` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `Filename` VARCHAR(255) NOT NULL,
