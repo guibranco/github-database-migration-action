@@ -17,24 +17,71 @@ jobs:
     name: GitHub Actions Test
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_DATABASE: testdb
+          MYSQL_USER: testuser
+          MYSQL_PASSWORD: testpassword
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v6
 
-      - name: Test Local Action
-        id: test-action
+      - name: Create migrations directory and sample migration
+        run: |
+          mkdir -p migrations
+          echo "CREATE TABLE IF NOT EXISTS test_table (id INT PRIMARY KEY);" > migrations/001_create_test_table.sql
+
+      - name: Test Local Action (dry-run)
+        id: test-action-dry-run
         uses: ./
         with:
           driver: 'mysql'
-          host: ${{ secrets.MYSQL_HOST }}
-          user: ${{ secrets.MYSQL_USER }}
-          database: ${{ secrets.MYSQL_DATABASE }}
-          operation: "test"
+          host: '127.0.0.1'
+          user: 'testuser'
+          database: 'testdb'
+          operation: 'dry-run'
+        env:
+          DATABASE_PWD: testpassword
+
+      - name: Test Local Action (migrate)
+        id: test-action-migrate
+        uses: ./
+        with:
+          driver: 'mysql'
+          host: '127.0.0.1'
+          user: 'testuser'
+          database: 'testdb'
+          operation: 'migrate'
+        env:
+          DATABASE_PWD: testpassword
+
+      - name: Test Local Action (check)
+        id: test-action-check
+        uses: ./
+        with:
+          driver: 'mysql'
+          host: '127.0.0.1'
+          user: 'testuser'
+          database: 'testdb'
+          operation: 'check'
+        env:
+          DATABASE_PWD: testpassword
 
       - name: Print Output
         id: output
-        run: echo "${{ steps.test-action.outputs.time }}"
+        run: echo "${{ steps.test-action-check.outputs.time }}"
 
   create-release:
     name: Create release
