@@ -41,7 +41,13 @@ LABEL \
   maintainer="${AUTHOR}" \
   repository="${REPO_URL}"
 
+RUN apk add --no-cache \
+    mysql-client \
+    postgresql-client \
+    freetds
+
 COPY entrypoint.sh /entrypoint.sh
+COPY schema-version/ /schema-version/
 
 RUN chmod +x /entrypoint.sh
 

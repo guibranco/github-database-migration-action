@@ -27,6 +27,10 @@ inputs:
     description: 'Database name'
     required: true
     default: 'example'
+  integrity_commands_file:
+    description: 'Path to a file with SQL queries to run for integrity checks (one per line). Required when OPERATION is integrity.'
+    required: false
+    default: ''
 
 outputs:
   time:
@@ -41,3 +45,4 @@ runs:
     - ${{ inputs.host }}
     - ${{ inputs.user }}
     - ${{ inputs.database }}
+    - ${{ inputs.integrity_commands_file }}
