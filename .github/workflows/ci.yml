@@ -54,6 +54,7 @@ jobs:
           operation: 'dry-run'
         env:
           DATABASE_PWD: testpassword
+          MYSQL_SSL_MODE: DISABLED
 
       - name: Test Local Action (migrate)
         id: test-action-migrate
@@ -66,6 +67,7 @@ jobs:
           operation: 'migrate'
         env:
           DATABASE_PWD: testpassword
+          MYSQL_SSL_MODE: DISABLED
 
       - name: Test Local Action (check)
         id: test-action-check
@@ -78,6 +80,7 @@ jobs:
           operation: 'check'
         env:
           DATABASE_PWD: testpassword
+          MYSQL_SSL_MODE: DISABLED
 
       - name: Print Output
         id: output
